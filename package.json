@@ -1,17 +1,38 @@
 {
-  "name": "utils",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "r-utils",
+  "version": "0.0.1",
+  "description": "常用的工具方法",
+  "main": "libs/index.js",
   "scripts": {
     "dev": "parcel dev ./index.html -p 8082",
     "build": "parcel build src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "prepublish": "./pre-publish.sh"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:895457129/utils.git"
+  },
+  "keywords": [
+    "utils"
+  ],
+  "author": "ranyun",
   "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/895457129/utils/issues"
+  },
   "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
+    "@types/jest": "^26.0.14",
+    "babel-jest": "^26.3.0",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.3.0",
     "typescript": "^4.0.2"
-  }
+  },
+  "files": [
+    "libs",
+    "README.md"
+  ]
 }
