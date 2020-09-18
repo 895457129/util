@@ -1,6 +1,6 @@
 {
-  "name": "r-utils",
-  "version": "0.0.1",
+  "name": "@yhtl/utils",
+  "version": "0.0.2",
   "description": "常用的工具方法",
   "main": "libs/index.js",
   "scripts": {
@@ -11,16 +11,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:895457129/utils.git"
+    "url": "https://e.coding.net/yhtl/common/web_utils.git"
   },
   "keywords": [
     "utils"
   ],
   "author": "ranyun",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/895457129/utils/issues"
-  },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
