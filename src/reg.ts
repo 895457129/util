@@ -11,6 +11,7 @@ export const IP = new RegExp('((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25
 
 interface CreatePasswordRegProps {
   useENLetter?: boolean, // 是否必须包含英文字母
+  useCapitalLetters?: boolean, // 是否必须包含大写英文字母
   useNumber?: boolean, // 是否必须包含字母
   useSpecialCharacters?: boolean, // 是否必须包含特殊字符
   specialCharacters?: string, // 特殊字符内容
@@ -20,6 +21,7 @@ interface CreatePasswordRegProps {
 
 const defaultCreatePasswordRegProps = {
   useENLetter: true,
+  useCapitalLetters: false,
   useNumber: true,
   useSpecialCharacters: false,
   specialCharacters: "#?!.,@$%^&*-",
@@ -27,34 +29,33 @@ const defaultCreatePasswordRegProps = {
   maxLength: 18,
 };
 
+/**
+ * 生校验正则表达式
+ * @param props
+ */
 export function createPasswordReg(props: CreatePasswordRegProps = defaultCreatePasswordRegProps) {
   const newProps = Object.assign(defaultCreatePasswordRegProps, props);
-  console.log(111, newProps);
-  let str = ".";
-  let canUseLetter = `[a-zA-Z\\d${newProps.specialCharacters}]`;
-  let mustUseENLetter = `(?=.*?[A-Za-z])`;
-  let mustUseNumber = `(?=.*?[0-9])`;
-  let mustUseSpecialCharacters = `(?=.*?[${newProps.specialCharacters}])`;
-  if (!newProps.useENLetter && !newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = ".";
-  }
+  const canUseLetter = `[a-zA-Z\\d${newProps.specialCharacters}]`;
+  const mustUseENLetter = `(?=.*?[A-Za-z])`;
+  const mustUseCapitalLetters = `(?=.*?[A-Z])`;
+  const mustUseNumber = `(?=.*?[0-9])`;
+  const mustUseSpecialCharacters = `(?=.*?[${newProps.specialCharacters}])`;
+  let str = "";
   if (newProps.useENLetter) {
-    str = `${mustUseENLetter}${canUseLetter}`
+    str = `${str}${mustUseENLetter}`;
   }
-  if () {
-
+  if (newProps.useCapitalLetters) {
+    str = `${str}${mustUseCapitalLetters}`;
   }
-  else if (newProps.useENLetter && !newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = `(?=.*?[A-Z])${canUseLetter}`;
-  } else if (!newProps.useENLetter && newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = `(?=.*?[0-9])${canUseLetter}`;
-  } else if (!newProps.useENLetter && !newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = `(?=.*?[${newProps.specialCharacters}])${canUseLetter}`;
-  } else if () {
-
+  if (newProps.useNumber) {
+    str = `${str}${mustUseNumber}`;
   }
-  return new RegExp(`^${str}{${newProps.minLength},${newProps.maxLength}}$`);
+  if (newProps.useSpecialCharacters) {
+    str = `${str}${mustUseSpecialCharacters}`;
+  }
+  return new RegExp(`^${str}${canUseLetter}{${newProps.minLength},${newProps.maxLength}}$`);
 }
+
 export default {
   IDCard,
   Phone,

@@ -136,31 +136,45 @@ exports.Chinese = new RegExp("^[\u4E00-\u9FA5]+$"); // IP
 exports.IP = new RegExp('((?:(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d)\\.){3}(?:25[0-5]|2[0-4]\\d|[01]?\\d?\\d))');
 var defaultCreatePasswordRegProps = {
   useENLetter: true,
+  useCapitalLetters: false,
   useNumber: true,
   useSpecialCharacters: false,
   specialCharacters: "#?!.,@$%^&*-",
   minLength: 6,
   maxLength: 18
 };
+/**
+ * 生校验正则表达式
+ * @param props
+ */
 
 function createPasswordReg() {
   var props = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultCreatePasswordRegProps;
   var newProps = Object.assign(defaultCreatePasswordRegProps, props);
-  console.log(111, newProps);
-  var str = ".";
   var canUseLetter = "[a-zA-Z\\d".concat(newProps.specialCharacters, "]");
+  var mustUseENLetter = "(?=.*?[A-Za-z])";
+  var mustUseCapitalLetters = "(?=.*?[A-Z])";
+  var mustUseNumber = "(?=.*?[0-9])";
+  var mustUseSpecialCharacters = "(?=.*?[".concat(newProps.specialCharacters, "])");
+  var str = "";
 
-  if (!newProps.useENLetter && !newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = ".";
-  } else if (newProps.useENLetter && !newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = "(?=.*?[A-Z])".concat(canUseLetter);
-  } else if (!newProps.useENLetter && newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = "(?=.*?[0-9])".concat(canUseLetter);
-  } else if (!newProps.useENLetter && !newProps.useNumber && !newProps.useSpecialCharacters) {
-    str = "(?=.*?[".concat(newProps.specialCharacters, "])").concat(canUseLetter);
+  if (newProps.useENLetter) {
+    str = "".concat(str).concat(mustUseENLetter);
   }
 
-  return new RegExp("^".concat(str, "{").concat(newProps.minLength, ",").concat(newProps.maxLength, "}$"));
+  if (newProps.useCapitalLetters) {
+    str = "".concat(str).concat(mustUseCapitalLetters);
+  }
+
+  if (newProps.useNumber) {
+    str = "".concat(str).concat(mustUseNumber);
+  }
+
+  if (newProps.useSpecialCharacters) {
+    str = "".concat(str).concat(mustUseSpecialCharacters);
+  }
+
+  return new RegExp("^".concat(str).concat(canUseLetter, "{").concat(newProps.minLength, ",").concat(newProps.maxLength, "}$"));
 }
 
 exports.createPasswordReg = createPasswordReg;
@@ -172,68 +186,110 @@ exports.default = {
   IP: exports.IP,
   createPasswordReg: createPasswordReg
 };
+},{}],"src/fun.ts":[function(require,module,exports) {
+"use strict";
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatTree = exports.hiddenStr = exports.formatPhone = exports.formatIDCard = void 0;
+/**
+ * 隐藏身份证号码
+ * @param IDCard
+ * @param start 开始隐藏位置
+ * @param len 隐藏长度
+ */
+
+function formatIDCard(IDCard) {
+  var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 6;
+  var len = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 8;
+  return hiddenStr(IDCard, 6, 8);
+}
+
+exports.formatIDCard = formatIDCard;
+/**
+ * 隐藏手机号码
+ * @param phone
+ */
+
+function formatPhone(phone) {
+  return hiddenStr(phone, 3, 4);
+}
+
+exports.formatPhone = formatPhone;
+/**
+ * 隐藏并替换字符串
+ * @param str
+ * @param start
+ * @param len
+ * @param replaceStrChar
+ */
+
+function hiddenStr(str, start, len) {
+  var replaceStrChar = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : "*";
+  var replaceStr = new Array(len).fill(replaceStrChar).join("");
+  var reg = new RegExp("^(.{".concat(start, "})(.{").concat(len, "})(.{").concat(str.length - start - len, "})$"));
+  return str.replace(reg, "$1".concat(replaceStr, "$3"));
+}
+
+exports.hiddenStr = hiddenStr;
+/**
+ * 格式化树
+ * @param list 树
+ * @param formatFun 格式化没一项的函数
+ * @param childrenName 子级 的key
+ * @param level 当前层级
+ */
+
+function formatTree() {
+  var list = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+  var formatFun = arguments.length > 1 ? arguments[1] : undefined;
+  var childrenName = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'children';
+  var level = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
+  return list.map(function (z, i) {
+    var hasChildren = !!(z[childrenName] || []).length;
+    return _objectSpread(_objectSpread({}, formatFun(z, i)), {}, {
+      level: level,
+      hasChildren: hasChildren,
+      children: hasChildren ? formatTree(z[childrenName] || [], formatFun, childrenName, level + 1) : null
+    });
+  });
+}
+
+exports.formatTree = formatTree;
+exports.default = {
+  formatIDCard: formatIDCard,
+  formatPhone: formatPhone
+};
 },{}],"src/index.ts":[function(require,module,exports) {
 "use strict";
 
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function get() {
-      return m[k];
-    }
-  });
-} : function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  o[k2] = m[k];
-});
-
-var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
-  Object.defineProperty(o, "default", {
-    enumerable: true,
-    value: v
-  });
-} : function (o, v) {
-  o["default"] = v;
-});
-
-var __importStar = this && this.__importStar || function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) {
-    if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-  }
-
-  __setModuleDefault(result, mod);
-
-  return result;
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
 };
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var reg_1 = __importStar(require("./reg"));
+var reg_1 = __importDefault(require("./reg"));
 
-var a = 4;
-var b = 5;
+var fun_1 = __importDefault(require("./fun"));
 
-function sum(a, b) {
-  return a + b;
-}
-
-console.log(sum(a, b), reg_1.default.IDCard.test("50023919910510595x"));
-var pwd = reg_1.createPasswordReg({
-  useENLetter: false,
-  useNumber: true,
-  useSpecialCharacters: false
-});
-console.log(pwd);
+console.log(fun_1.default.formatPhone("18382346121"), fun_1.default.formatIDCard("500239199105105956"));
 exports.default = {
-  sum: sum,
-  reg: reg_1.default
+  regExpUtils: reg_1.default,
+  funUtils: fun_1.default
 };
-},{"./reg":"src/reg.ts"}],"../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"./reg":"src/reg.ts","./fun":"src/fun.ts"}],"../../.config/yarn/global/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -261,7 +317,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "62278" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "64982" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

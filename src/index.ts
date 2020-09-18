@@ -1,21 +1,9 @@
-import reg, {createPasswordReg} from './reg';
+import reg from './reg';
+import fun from './fun';
 
-const a: number = 4;
-const b: number = 5;
-
-function sum(a:number, b:number): number {
-  return a + b;
-}
-
-console.log(sum(a, b), reg.IDCard.test("50023919910510595x"));
-const pwd = createPasswordReg({
-  useENLetter: false,
-  useNumber: true,
-  useSpecialCharacters: false,
-});
-console.log(pwd);
+console.log(fun.formatPhone("18382346121"), fun.formatIDCard("500239199105105956"));
 
 export default {
-  sum,
-  reg,
+  regExpUtils: reg,
+  funUtils: fun,
 }
