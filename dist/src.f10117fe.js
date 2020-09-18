@@ -265,7 +265,8 @@ function formatTree() {
 exports.formatTree = formatTree;
 exports.default = {
   formatIDCard: formatIDCard,
-  formatPhone: formatPhone
+  formatPhone: formatPhone,
+  formatTree: formatTree
 };
 },{}],"src/index.ts":[function(require,module,exports) {
 "use strict";

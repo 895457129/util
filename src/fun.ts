@@ -51,4 +51,5 @@ export function formatTree(list: any[] = [], formatFun: (item: any, index: numbe
 export default {
   formatIDCard,
   formatPhone,
+  formatTree,
 }
